@@ -24,7 +24,6 @@
             <groupId>me.nahu.wrapper</groupId>
             <artifactId>folia-scheduler-wrapper</artifactId>
             <version>0.0.2-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.mojang</groupId>

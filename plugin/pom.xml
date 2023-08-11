@@ -81,7 +81,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -103,6 +103,7 @@
                     <artifactSet>
                         <includes>
                             <include>net.kyori:*</include>
+                            <include>me.nahu.*</include>
                             <include>LibsDisguises:*</include>
                         </includes>
                     </artifactSet>
@@ -298,6 +299,12 @@
             <version>2.6</version>
             <optional>true</optional>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.nahu.wrapper</groupId>
+            <artifactId>folia-scheduler-wrapper</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
