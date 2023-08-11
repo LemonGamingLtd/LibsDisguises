@@ -21,13 +21,13 @@ import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.events.DisguiseInteractEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class PacketListenerClientInteract extends PacketAdapter {
     public PacketListenerClientInteract(LibsDisguises plugin) {
@@ -64,16 +64,12 @@ public class PacketListenerClientInteract extends PacketAdapter {
             event.setCancelled(true);
         }
 
-        if (!Bukkit.isPrimaryThread()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    handleSync(observer, packet);
-                }
-            }.runTask(LibsDisguises.getInstance());
-        } else {
-            handleSync(observer, packet);
-        }
+        new WrappedRunnable() {
+            @Override
+            public void run() {
+                handleSync(observer, packet);
+            }
+        }.runTaskAtEntity(LibsDisguises.getInstance(), observer);
     }
 
     private EnumWrappers.Hand getHand(PacketContainer packet) {
@@ -124,7 +120,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
                 handUsed = EquipmentSlot.HAND;
             }
 
-            new BukkitRunnable() {
+            new WrappedRunnable() {
                 @Override
                 public void run() {
                     // Fire self interact event
@@ -172,7 +168,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
     }
 
     private void doSaddleable(Player observer, Disguise disguise) {
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
@@ -188,12 +184,12 @@ public class PacketListenerClientInteract extends PacketAdapter {
                     break;
                 }
             }
-        }.runTask(LibsDisguises.getInstance());
+        }.runTaskAtEntity(LibsDisguises.getInstance(), observer);
     }
 
     private void doCarpetable(Player observer, Disguise disguise) {
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
@@ -215,11 +211,11 @@ public class PacketListenerClientInteract extends PacketAdapter {
                     break;
                 }
             }
-        }.runTask(LibsDisguises.getInstance());
+        }.runTaskAtEntity(LibsDisguises.getInstance(), observer);
     }
 
     private void doDyeable(Player observer, Disguise disguise) {
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
@@ -252,6 +248,6 @@ public class PacketListenerClientInteract extends PacketAdapter {
                     }
                 }
             }
-        }.runTask(LibsDisguises.getInstance());
+        }.runTaskAtEntity(LibsDisguises.getInstance(), observer);
     }
 }

@@ -8,6 +8,7 @@ author: libraryaddict
 authors: [ Byteflux, Navid K. ]
 softdepend: [ ProtocolLib, LibsDisguisesVersioning ]
 api-version: '1.13'
+folia-supported: true
 commands:
   libsdisguises:
     aliases: [ libsdisg, ld ]

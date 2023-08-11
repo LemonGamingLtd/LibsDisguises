@@ -51,6 +51,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
@@ -88,7 +89,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
@@ -2509,7 +2509,7 @@ public class ReflectionManager {
 
     public static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
         if (canScheduleTask && (!Bukkit.isPrimaryThread() || DisguiseUtilities.isRunningPaper())) {
-            new BukkitRunnable() {
+            new WrappedRunnable() {
                 @Override
                 public void run() {
                     setScore(scoreboard, name, score, false);

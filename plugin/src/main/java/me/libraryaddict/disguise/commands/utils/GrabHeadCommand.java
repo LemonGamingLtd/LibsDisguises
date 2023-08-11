@@ -6,6 +6,8 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
+import me.nahu.scheduler.wrapper.task.WrappedTask;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,8 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.Field;
 
@@ -39,7 +39,7 @@ public class GrabHeadCommand implements CommandExecutor {
             return true;
         }
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
@@ -60,12 +60,12 @@ public class GrabHeadCommand implements CommandExecutor {
         }
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
-            private final BukkitTask runnable = new BukkitRunnable() {
+            private final WrappedTask runnable = new WrappedRunnable() {
                 @Override
                 public void run() {
                     LibsMsg.PLEASE_WAIT.send(sender);
                 }
-            }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
+            }.runTaskTimerAtEntity(LibsDisguises.getInstance(), player, 100, 100);
 
             @Override
             public void onError(LibsMsg msg, Object... args) {
@@ -86,7 +86,7 @@ public class GrabHeadCommand implements CommandExecutor {
 
                 DisguiseUtilities.setGrabHeadCommandUsed();
 
-                new BukkitRunnable() {
+                new WrappedRunnable() {
                     @Override
                     public void run() {
                         ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
@@ -105,7 +105,7 @@ public class GrabHeadCommand implements CommandExecutor {
                         ((Player) sender).getInventory().addItem(skull);
                         LibsMsg.GRAB_HEAD_SUCCESS.send(sender);
                     }
-                }.runTask(LibsDisguises.getInstance());
+                }.runTaskAtEntity(LibsDisguises.getInstance(), player);
             }
         };
 

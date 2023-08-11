@@ -6,12 +6,12 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.config.ConfigLoader;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -197,7 +197,7 @@ public class LDUploadLogs implements LDCommand {
 
             sender.sendMessage(ChatColor.GOLD + "Now creating pastebin links...");
 
-            new BukkitRunnable() {
+            new WrappedRunnable() {
                 @Override
                 public void run() {
                     try {
@@ -221,7 +221,7 @@ public class LDUploadLogs implements LDCommand {
 
                         lastUsed = System.currentTimeMillis();
 
-                        new BukkitRunnable() {
+                        new WrappedRunnable() {
                             @Override
                             public void run() {
                                 sender.sendMessage(ChatColor.GOLD + "Upload successful!");

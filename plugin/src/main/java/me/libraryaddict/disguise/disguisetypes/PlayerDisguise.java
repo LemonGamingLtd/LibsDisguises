@@ -12,11 +12,11 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerDisguise extends TargetedDisguise {
     private transient LibsProfileLookup currentLookup;
@@ -732,12 +732,12 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (hasScoreboardName()) {
             if (disguiseBeingReplaced) {
-                new BukkitRunnable() {
+                new WrappedRunnable() {
                     @Override
                     public void run() {
                         DisguiseUtilities.unregisterExtendedName(PlayerDisguise.this);
                     }
-                }.runTaskLater(LibsDisguises.getInstance(), 5);
+                }.runTaskLaterAtEntity(LibsDisguises.getInstance(), getEntity(), 5);
             } else {
                 DisguiseUtilities.unregisterExtendedName(this);
             }

@@ -157,12 +157,7 @@ public class Metrics {
                 // scheduler
                 // Don't be afraid! The connection to the bStats server is still async, only the stats collection is
                 // sync ;)
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        submitData();
-                    }
-                });
+                submitData();
             }
         }, 1000 * 60 * 5, 1000 * 60 * 30);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start

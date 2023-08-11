@@ -7,9 +7,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class PacketListenerClientCustomPayload extends PacketAdapter {
             return;
         }
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 if (!player.isOnline() || player.hasMetadata("ld_loggedin")) {
@@ -62,6 +62,6 @@ public class PacketListenerClientCustomPayload extends PacketAdapter {
 
                 player.setMetadata("ld_loggedin", new FixedMetadataValue(LibsDisguises.getInstance(), true));
             }
-        }.runTaskLater(LibsDisguises.getInstance(), 20);
+        }.runTaskLaterAtEntity(LibsDisguises.getInstance(), player, 20);
     }
 }

@@ -6,9 +6,9 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +56,7 @@ public class LDUpdate implements LDCommand {
             DisguiseConfig.setUsingReleaseBuilds(releaseBuilds);
         }
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 LibsMsg updateResult = checker.doUpdateCheck();

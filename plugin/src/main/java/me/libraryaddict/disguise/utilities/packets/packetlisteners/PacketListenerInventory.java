@@ -15,12 +15,11 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.Bukkit;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class PacketListenerInventory extends PacketAdapter {
         }
 
         if (event.isAsync()) {
-            new BukkitRunnable() {
+            new WrappedRunnable() {
                 @Override
                 public void run() {
                     onPacketReceiving(event);
@@ -142,11 +141,7 @@ public class PacketListenerInventory extends PacketAdapter {
                 if (clickedItem != null && clickedItem.getType() != Material.AIR) {
                     // Rather than predict the clients actions
                     // Lets just update the entire inventory..
-                    Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
-                        public void run() {
-                            player.updateInventory();
-                        }
-                    });
+                    libsDisguises.getScheduler().runTaskAtEntity(player, player::updateInventory);
                 }
 
                 return;

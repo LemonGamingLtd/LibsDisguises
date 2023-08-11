@@ -9,6 +9,8 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
+import me.nahu.scheduler.wrapper.task.WrappedTask;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,8 +18,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
 
@@ -118,7 +118,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                 String[] finalArgs = args;
 
                 SkinUtils.grabSkin(args[skinId], new SkinUtils.SkinCallback() {
-                    private final BukkitTask runnable = new BukkitRunnable() {
+                    private final WrappedTask runnable = new WrappedRunnable() {
                         @Override
                         public void run() {
                             LibsMsg.PLEASE_WAIT.send(sender);

@@ -126,11 +126,9 @@ public class UpdateChecker {
                 notifyUpdate(Bukkit.getConsoleSender());
             }
 
-            Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    notifyUpdate(p);
-                }
-            });
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                LibsDisguises.getInstance().getScheduler().runTaskAtEntity(p, () -> notifyUpdate(p));
+            }
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(String.format("Failed to check for update: %s", ex.getMessage()));
         }

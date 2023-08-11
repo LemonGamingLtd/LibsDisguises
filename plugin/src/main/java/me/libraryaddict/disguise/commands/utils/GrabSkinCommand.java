@@ -8,6 +8,8 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
+import me.nahu.scheduler.wrapper.task.WrappedTask;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -17,8 +19,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Locale;
 
@@ -39,6 +39,11 @@ public class GrabSkinCommand implements CommandExecutor {
 
         if (!sender.hasPermission("libsdisguises.grabskin")) {
             LibsMsg.NO_PERM.send(sender);
+            return true;
+        }
+
+        if (!(sender instanceof Player player)) {
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
@@ -81,12 +86,12 @@ public class GrabSkinCommand implements CommandExecutor {
         }
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
-            private final BukkitTask runnable = new BukkitRunnable() {
+            private final WrappedTask runnable = new WrappedRunnable() {
                 @Override
                 public void run() {
                     LibsMsg.PLEASE_WAIT.send(sender);
                 }
-            }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
+            }.runTaskTimerAtEntity(LibsDisguises.getInstance(), player, 100, 100);
 
             @Override
             public void onError(LibsMsg msg, Object... args) {
@@ -122,7 +127,9 @@ public class GrabSkinCommand implements CommandExecutor {
                 }
 
                 DisguiseAPI.addGameProfile(nName, profile);
-                LibsMsg.GRABBED_SKIN.send(sender, nName);
+
+                final String nickName = nName;
+                LibsDisguises.getInstance().getScheduler().runTaskAtEntity(player, () -> LibsMsg.GRABBED_SKIN.send(sender, nickName));
 
                 String string = DisguiseUtilities.getGson().toJson(profile);
                 int start = 0;
@@ -153,7 +160,7 @@ public class GrabSkinCommand implements CommandExecutor {
                     msg += 1;
                 }
 
-                sender.spigot().sendMessage(builder.create());
+                LibsDisguises.getInstance().getScheduler().runTaskAtEntity(player, () -> sender.spigot().sendMessage(builder.create()));
                 /*} else {
                     LibsMsg.SKIN_DATA.send(sender, string);
                 }*/

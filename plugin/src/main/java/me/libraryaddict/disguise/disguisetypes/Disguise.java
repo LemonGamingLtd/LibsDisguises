@@ -25,6 +25,7 @@ import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -41,7 +42,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +55,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class Disguise {
     private transient boolean disguiseInUse;
     private final DisguiseType disguiseType;
-    private transient BukkitRunnable runnable;
+    private transient WrappedRunnable runnable;
     private transient Entity entity;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
@@ -426,7 +426,11 @@ public abstract class Disguise {
         // A scheduler to clean up any unused disguises.
         runnable = new DisguiseRunnable(this);
 
-        runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+        if (getEntity() != null) {
+            runnable.runTaskTimerAtEntity(LibsDisguises.getInstance(), entity, 1, 1);
+        } else {
+            runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+        }
     }
 
     /**
@@ -1006,7 +1010,7 @@ public abstract class Disguise {
         DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
 
         // If he is a player, then self disguise himself
-        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> DisguiseUtilities.setupFakeDisguise(Disguise.this), 2);
+        LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(this.getEntity(), () -> DisguiseUtilities.setupFakeDisguise(Disguise.this), 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
             PacketContainer removeTab = ReflectionManager.updateTablistVisibility((Player) getEntity(), false);

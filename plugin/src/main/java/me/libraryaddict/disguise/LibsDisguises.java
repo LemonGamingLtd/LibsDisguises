@@ -38,6 +38,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
+import me.nahu.scheduler.wrapper.FoliaWrappedJavaPlugin;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -47,8 +49,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -57,7 +57,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class LibsDisguises extends JavaPlugin {
+public class LibsDisguises extends FoliaWrappedJavaPlugin {
     private static LibsDisguises instance;
     private DisguiseListener listener;
     private String buildNumber;
@@ -206,7 +206,7 @@ public class LibsDisguises extends JavaPlugin {
                 String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
                 String version = Bukkit.getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
 
-                BukkitRunnable runnable = new BukkitRunnable() {
+                WrappedRunnable runnable = new WrappedRunnable() {
                     private int timesRun;
 
                     @Override

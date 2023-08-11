@@ -65,7 +65,7 @@ public class LibsPackets {
 
     public void sendDelayed(final Player observer) {
         for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : getDelayedPacketsMap().entrySet()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+            LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(observer, () -> {
                 if (!getDisguise().isDisguiseInUse()) {
                     ArrayList<PacketContainer> packets = entry.getValue();
 

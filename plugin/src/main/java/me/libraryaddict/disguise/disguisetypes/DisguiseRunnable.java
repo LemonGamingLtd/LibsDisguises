@@ -10,16 +10,16 @@ import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 /**
  * Created by libraryaddict on 20/05/2021.
  */
-class DisguiseRunnable extends BukkitRunnable {
+class DisguiseRunnable extends WrappedRunnable {
     private int blockX, blockY, blockZ, facing;
     private int deadTicks = 0;
     private int actionBarTicks = -1;

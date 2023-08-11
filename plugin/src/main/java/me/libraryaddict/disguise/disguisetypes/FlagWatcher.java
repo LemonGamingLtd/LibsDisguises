@@ -415,7 +415,7 @@ public class FlagWatcher {
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                            LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(getDisguise().getEntity(), () -> {
                                 try {
                                     DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), getDisguise());
                                 } catch (Exception ex) {

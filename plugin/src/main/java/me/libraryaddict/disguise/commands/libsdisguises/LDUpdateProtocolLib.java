@@ -3,9 +3,9 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public class LDUpdateProtocolLib implements LDCommand {
 
         sender.sendMessage(ChatColor.RED + "Please hold, now downloading ProtocolLib..");
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 File protocolLibFile = null;
@@ -50,7 +50,7 @@ public class LDUpdateProtocolLib implements LDCommand {
                 try {
                     DisguiseUtilities.updateProtocolLib();
 
-                    new BukkitRunnable() {
+                    new WrappedRunnable() {
                         @Override
                         public void run() {
                             sender.sendMessage(ChatColor.RED + "Download success! Restart server to finish update!");
@@ -59,7 +59,7 @@ public class LDUpdateProtocolLib implements LDCommand {
                 } catch (Exception ex) {
                     ex.printStackTrace();
 
-                    new BukkitRunnable() {
+                    new WrappedRunnable() {
                         @Override
                         public void run() {
                             sender.sendMessage(ChatColor.RED +

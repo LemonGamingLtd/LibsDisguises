@@ -22,6 +22,7 @@ import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -57,7 +58,6 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -66,7 +66,7 @@ import java.util.Set;
 
 public class DisguiseListener implements Listener {
     private final HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
-    private final HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
+    private final HashMap<String, WrappedRunnable> disguiseRunnable = new HashMap<>();
     private final LibsDisguises plugin;
     @Getter
     @Setter
@@ -127,7 +127,7 @@ public class DisguiseListener implements Listener {
     }
 
     public void cleanup() {
-        for (BukkitRunnable r : disguiseRunnable.values()) {
+        for (WrappedRunnable r : disguiseRunnable.values()) {
             r.cancel();
         }
 
@@ -414,7 +414,7 @@ public class DisguiseListener implements Listener {
         if (!DisguiseConfig.isNeverUpdateProtocolLib() && DisguiseUtilities.isProtocolLibOutdated() && p.hasPermission("libsdisguises.update")) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(p, version, requiredProtocolLib);
 
-            new BukkitRunnable() {
+            new WrappedRunnable() {
                 @Override
                 public void run() {
                     if (!p.isOnline()) {
@@ -424,7 +424,7 @@ public class DisguiseListener implements Listener {
 
                     DisguiseUtilities.sendProtocolLibUpdateMessage(p, version, requiredProtocolLib);
                 }
-            }.runTaskTimer(LibsDisguises.getInstance(), 10, 10 * 60 * 20); // Run every 10 minutes
+            }.runTaskTimerAtEntity(LibsDisguises.getInstance(), p, 10, 10 * 60 * 20); // Run every 10 minutes
         }
 
         if (DisguiseConfig.isSavePlayerDisguises()) {
@@ -468,7 +468,7 @@ public class DisguiseListener implements Listener {
             }
         }
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 if (!p.isOnline()) {
@@ -497,9 +497,9 @@ public class DisguiseListener implements Listener {
                     }
                 }
             }
-        }.runTaskLater(LibsDisguises.getInstance(), 20);
+        }.runTaskLaterAtEntity(LibsDisguises.getInstance(), p, 20);
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 if (!p.isOnline()) {
@@ -513,7 +513,7 @@ public class DisguiseListener implements Listener {
                     required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
                 }
             }
-        }.runTaskLater(LibsDisguises.getInstance(), 60);
+        }.runTaskLaterAtEntity(LibsDisguises.getInstance(), p, 60);
     }
 
     /**
@@ -705,7 +705,7 @@ public class DisguiseListener implements Listener {
                     ex.printStackTrace();
                 }
 
-                new BukkitRunnable() {
+                new WrappedRunnable() {
                     @Override
                     public void run() {
                         if (event.isCancelled() || !disguise.isDisguiseInUse()) {
@@ -714,7 +714,7 @@ public class DisguiseListener implements Listener {
 
                         DisguiseUtilities.sendSelfDisguise(player, (TargetedDisguise) disguise);
                     }
-                }.runTaskLater(LibsDisguises.getInstance(), 4);
+                }.runTaskLaterAtEntity(LibsDisguises.getInstance(), player, 4);
             }
         } else if (from.getWorld() != to.getWorld()) {
             // Stupid hack to fix worldswitch invisibility bug & paper packet bug
@@ -726,7 +726,7 @@ public class DisguiseListener implements Listener {
                 if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
+                    plugin.getScheduler().runTaskLaterAtEntity(disguise.getEntity(), () -> disguise.setViewSelfDisguise(true), 20L);
                 }
             }
         }
@@ -755,7 +755,7 @@ public class DisguiseListener implements Listener {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
 
             if (disguise != null) {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.getScheduler().runTaskAtEntity(disguise.getEntity(), () -> {
                     DisguiseUtilities.setupFakeDisguise(disguise);
 
                     ((Player) disguise.getEntity()).updateInventory();
@@ -790,7 +790,7 @@ public class DisguiseListener implements Listener {
                 if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
+                    plugin.getScheduler().runTaskLaterAtEntity(disguise.getEntity(), () -> disguise.setViewSelfDisguise(true), 20L);
                 }
             }
         }
@@ -803,7 +803,7 @@ public class DisguiseListener implements Listener {
 
         interactions.put(playerName, interaction);
 
-        BukkitRunnable runnable = new BukkitRunnable() {
+        WrappedRunnable runnable = new WrappedRunnable() {
             @Override
             public void run() {
                 interactions.remove(playerName);

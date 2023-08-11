@@ -56,6 +56,7 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -91,7 +92,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
@@ -350,7 +350,7 @@ public class DisguiseUtilities {
 
         lastSavedPreferences = System.currentTimeMillis();
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 saveViewPreferances();
@@ -1123,7 +1123,7 @@ public class DisguiseUtilities {
 
         getFutureDisguises().get(entityId).add(disguise);
 
-        final BukkitRunnable runnable = new BukkitRunnable() {
+        final WrappedRunnable runnable = new WrappedRunnable() {
             @Override
             public void run() {
                 if (!getFutureDisguises().containsKey(entityId) || !getFutureDisguises().get(entityId).contains(disguise)) {
@@ -1527,11 +1527,11 @@ public class DisguiseUtilities {
                         runnables.get(playerName).add(runnable);
                     }
 
-                    Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), () -> {
+                    LibsDisguises.getInstance().getScheduler().runTaskAsynchronously(() -> {
                         try {
                             final WrappedGameProfile gameProfile = lookupGameProfile(origName);
 
-                            Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
+                            LibsDisguises.getInstance().getScheduler().runTask(() -> {
                                 if (DisguiseConfig.isSaveGameProfiles()) {
                                     addGameProfile(playerName, gameProfile);
                                 }
@@ -1718,7 +1718,7 @@ public class DisguiseUtilities {
             }
 
             if (fetch) {
-                new BukkitRunnable() {
+                new WrappedRunnable() {
                     @Override
                     public void run() {
                         try {
@@ -1823,7 +1823,7 @@ public class DisguiseUtilities {
                 PacketContainer destroyPacket = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
                 ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(disguise.getEntity(), () -> {
                     try {
                         DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                     } catch (Exception ex) {
@@ -1853,7 +1853,7 @@ public class DisguiseUtilities {
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                    LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(pl, () -> {
                         try {
                             ReflectionManager.addEntityTracker(entityTrackerEntry, p);
                         } catch (Exception ex) {
@@ -1898,7 +1898,7 @@ public class DisguiseUtilities {
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
 
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                        LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(player, () -> {
                             try {
                                 ReflectionManager.addEntityTracker(entityTrackerEntry, p);
                             } catch (Exception ex) {
@@ -1933,7 +1933,7 @@ public class DisguiseUtilities {
 
                 removeSelfTracker((Player) disguise.getEntity());
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(disguise.getEntity(), () -> {
                     try {
                         DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                     } catch (Exception ex) {
@@ -1957,7 +1957,7 @@ public class DisguiseUtilities {
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
 
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                        LibsDisguises.getInstance().getScheduler().runTaskLaterAtEntity(player, () -> {
                             try {
                                 ReflectionManager.addEntityTracker(entityTrackerEntry, p);
                             } catch (Exception ex) {
@@ -2569,7 +2569,7 @@ public class DisguiseUtilities {
                 // If it is, then this method will be run again in one tick. Which is when it should be constructed.
                 // Else its going to run in a infinite loop hue hue hue..
                 // At least until this disguise is discarded
-                Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
+                LibsDisguises.getInstance().getScheduler().runTaskAtEntity(player, () -> {
                     if (DisguiseAPI.getDisguise(player, player) == disguise) {
                         sendSelfDisguise(player, disguise);
                     }

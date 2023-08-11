@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -30,7 +31,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
@@ -94,7 +94,7 @@ public class PlayerSkinHandler implements Listener {
             }).build();
 
     public PlayerSkinHandler() {
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 getCache().asMap().forEach((key, value) -> doTeleport(key, value));
@@ -324,7 +324,7 @@ public class PlayerSkinHandler implements Listener {
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                         }
                     } else {
-                        new BukkitRunnable() {
+                        new WrappedRunnable() {
                             @Override
                             public void run() {
                                 if (!disguise.isDisguiseInUse()) {
@@ -335,14 +335,14 @@ public class PlayerSkinHandler implements Listener {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                 }
                             }
-                        }.runTaskLater(LibsDisguises.getInstance(), entry.getKey());
+                        }.runTaskLaterAtEntity(LibsDisguises.getInstance(), player, entry.getKey());
                     }
                 }
 
                 if (skin.isSleepPackets()) {
                     addTeleport(player, skin);
 
-                    new BukkitRunnable() {
+                    new WrappedRunnable() {
                         @Override
                         public void run() {
                             try {
@@ -351,7 +351,7 @@ public class PlayerSkinHandler implements Listener {
                                 e.printStackTrace();
                             }
                         }
-                    }.runTask(LibsDisguises.getInstance());
+                    }.runTaskAtEntity(LibsDisguises.getInstance(), player);
                 }
 
                 if (DisguiseConfig.isArmorstandsName() && disguise.isNameVisible() && disguise.getMultiNameLength() > 0) {

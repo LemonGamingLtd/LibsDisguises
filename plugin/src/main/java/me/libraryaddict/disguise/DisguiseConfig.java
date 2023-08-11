@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import me.nahu.scheduler.wrapper.task.WrappedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
@@ -28,7 +29,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -224,7 +224,7 @@ public class DisguiseConfig {
     private static Boolean autoUpdate;
     @Getter
     private static boolean notifyUpdate;
-    private static BukkitTask updaterTask;
+    private static WrappedTask updaterTask;
     @Getter
     @Setter
     private static boolean tallSelfDisguises;
@@ -357,9 +357,10 @@ public class DisguiseConfig {
         // Next update check will be in 30 minutes, or the timer - elapsed time. Whatever is greater
         timeSinceLast = Math.max(30 * 60 * 20, timer - timeSinceLast);
 
-        updaterTask = Bukkit.getScheduler()
-            .runTaskTimerAsynchronously(LibsDisguises.getInstance(), () -> LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck(), timeSinceLast,
-                timer);
+        updaterTask = LibsDisguises.getInstance().getScheduler().runTaskTimerAsynchronously(
+            () -> LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck(),
+            timeSinceLast, timer
+        );
     }
 
     public static void setUsingReleaseBuilds(boolean useReleaseBuilds) {
